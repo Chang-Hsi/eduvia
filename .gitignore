@@ -1,0 +1,41 @@
+# === Logs ===
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# === Build outputs ===
+dist/
+dist-ssr/
+
+# === Dependencies ===
+node_modules/
+
+# === Local env / secrets ===
+# 重要：不要把 .env 推上去；保留一份範例
+.env*
+!.env.example
+
+# === Vite / tooling caches ===
+.vite/
+.cache/
+coverage/
+*.tsbuildinfo
+
+# === Editor / OS ===
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# === Hosting metadata (若未來連其他平台) ===
+.netlify/
+.vercel/

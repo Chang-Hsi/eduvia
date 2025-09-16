@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Python 入門特訓｜從基礎到證照的完整路線</title>
+  <style>
+    :root {
+      --ink: #0f172a;
+      --muted: #475569;
+      --brand: #10b981;
+      --border: #e5e7eb;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --accent: #0ea5e9;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 32px 16px;
+    }
+
+    header h1 {
+      font-size: clamp(28px, 4vw, 40px);
+      margin: 0 0 8px
+    }
+
+    header p.lead {
+      color: var(--muted);
+      line-height: 1.8;
+      margin: 0
+    }
+
+    .pill {
+      display: inline-block;
+      margin: 10px 6px 0 0;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #ecfeff;
+      color: #0369a1;
+      font-size: 12px
+    }
+
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      margin-top: 20px
+    }
+
+    h2 {
+      font-size: 22px;
+      margin: 0 0 12px
+    }
+
+    p {
+      line-height: 1.9;
+      color: var(--muted);
+      margin: 10px 0
+    }
+
+    ul {
+      padding-left: 20px;
+      margin: 8px 0
+    }
+
+    li {
+      line-height: 1.8;
+      color: var(--muted)
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr))
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 8px 12px 0 0;
+      color: #065f46
+    }
+
+    .badge i {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: #d1fae5;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-style: normal;
+      font-weight: 700;
+      color: #065f46
+    }
+
+    .note {
+      border-left: 4px solid var(--accent);
+      background: #f0f9ff;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 10px
+    }
+
+    .hr {
+      height: 1px;
+      background: var(--border);
+      margin: 16px 0
+    }
+
+    .small {
+      font-size: 13px;
+      color: var(--muted)
+    }
+
+    @media (max-width:720px) {
+      .grid.two {
+        grid-template-columns: 1fr
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <header>
+      <h1>想學程式？從 Python 開始就對了</h1>
+      <p class="lead">
+        Python 語法簡潔、資源龐大，又同時支援物件導向與直譯式開發。
+        不管是資料分析、科學運算、網站後端或網頁爬蟲，Python 都能快速上手並解決真實問題。
+      </p>
+      <div>
+        <span class="pill">初學者友善</span>
+        <span class="pill">跨平台</span>
+        <span class="pill">龐大生態系</span>
+        <span class="pill">自由軟體</span>
+      </div>
+    </header>
+
+    <section>
+      <h2>為什麼推薦 Python 作為第一門程式語言</h2>
+      <ul>
+        <li><strong>直覺易學：</strong>語法清楚好讀，能把心力放在邏輯與解題，而非背誦語法。</li>
+        <li><strong>自由免費：</strong>開源授權、免費使用，入門成本低。</li>
+        <li><strong>資源豐富：</strong>內建標準函式庫完整，外部套件生態繁盛，應用情境幾乎面面俱到。</li>
+        <li><strong>跨平台：</strong>Windows、macOS、Linux 皆可直接執行與開發。</li>
+      </ul>
+      <p>
+        從資料分析、機器學習到網站架設、網頁爬蟲，Python 的身影無所不在。
+        人才需求也持續增長，薪資與職涯彈性表現亮眼，是入門與轉職皆合適的選擇。
+      </p>
+    </section>
+
+    <section>
+      <h2>學程式的核心價值：運算思維與邏輯力</h2>
+      <p>
+        程式學習的本質，是訓練拆解問題、抽象化與系統化思考的能力。
+        透過演算法與資料結構的基本訓練，你將能以更有效率的方式處理複雜情境，面對快速變動的世界。
+      </p>
+      <div class="grid two">
+        <div class="badge"><i>①</i><span>拆解問題與建立流程</span></div>
+        <div class="badge"><i>②</i><span>把想法轉為可執行步驟</span></div>
+        <div class="badge"><i>③</i><span>驗證、除錯、持續改進</span></div>
+        <div class="badge"><i>④</i><span>以資料驅動做出決策</span></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>課程特色：從零開始，直達實作與證照要點</h2>
+      <ul>
+        <li><strong>由淺入深的訓練：</strong>從環境建置、語法基礎到實作案例，一步步建立正確觀念與手感。</li>
+        <li><strong>一次安裝就上路：</strong>整合 Anaconda 等工具，常用套件一次就緒，降低準備成本。</li>
+        <li><strong>貼近課綱：</strong>範例與評量素材對應 108 課綱，兼顧學科與實務。</li>
+        <li><strong>對接職場需求：</strong>彙整 TQC+ Python 認證要點，幫助你把學習成果轉化為可被職場辨識的能力。</li>
+      </ul>
+      <div class="note">
+        <strong>收穫：</strong>打好基礎語法 → 建立解題邏輯 → 完成小專題/小遊戲 → 理解 TQC+ 重點 → 強化就業競爭力。
+      </div>
+    </section>
+
+    <section>
+      <h2>適合對象</h2>
+      <ul>
+        <li>第一次接觸程式設計、想找一門好上手語言的初學者。</li>
+        <li>期望把資料處理、分析自動化納入日常工作的上班族與學生。</li>
+        <li>準備挑戰 TQC+ Python 認證，希望有效率掌握考點者。</li>
+        <li>打算轉職軟體/資料相關職缺，需要一條清晰學習路線的人。</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>課程地圖（節錄）</h2>
+      <ul>
+        <li><strong>單元一：</strong>建置 Python 開發環境、快速認識工具鏈與 Anaconda。</li>
+        <li><strong>單元二：</strong>變數、型別、運算子與基本輸入/輸出。</li>
+        <li><strong>單元三：</strong>流程控制：條件判斷與迴圈。</li>
+        <li><strong>單元四：</strong>資料結構：字串、列表、字典、集合的實務用法。</li>
+        <li><strong>單元五：</strong>函式、模組與套件管理，撰寫可重用程式。</li>
+        <li><strong>單元六：</strong>專題實作（含小遊戲）與 TQC+ 重點複盤。</li>
+      </ul>
+      <p class="small">完整課程預計 360 分鐘，內容將依學習回饋持續優化。</p>
+    </section>
+
+    <section>
+      <h2>你將帶走</h2>
+      <ul>
+        <li>一套可持續延伸的 Python 學習與實作方法。</li>
+        <li>從零開始的專題成果與作品經驗。</li>
+        <li>對 TQC+ Python 認證重點的清楚地圖。</li>
+        <li>更穩固的邏輯思維與運算思維能力。</li>
+      </ul>
+      <div class="hr"></div>
+      <p><strong>現在就啟程：</strong>用最親切的語言，打好最紮實的底，為未來的進階學習與職涯加分。</p>
+    </section>
+  </main>
+</body>
+
+</html>

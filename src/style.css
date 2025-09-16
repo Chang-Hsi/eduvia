@@ -1,0 +1,7 @@
+/* style.css（節錄）*/
+@import "tailwindcss";
+
+:root {
+  --brand-600: #2563eb; /* 方便自家樣式用：bg-[var(--brand-600)] 等 */
+  --tw-ring-color: var(--brand-600);
+}
