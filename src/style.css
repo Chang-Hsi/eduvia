@@ -5,3 +5,23 @@
   --brand-600: #2563eb; /* 方便自家樣式用：bg-[var(--brand-600)] 等 */
   --tw-ring-color: var(--brand-600);
 }
+
+@layer base {
+  /* 富文本容器中的 <p> 統一排版 */
+  :where(.prose, .resume-preview, .rich) p {
+    margin: 0 0 0.75rem;     /* 與圖示相近的段落間距 */
+    line-height: 1.5;        /* 行高 */
+    font-size: 1rem;         /* 文字大小 */
+    word-break: break-word;  /* 長字/網址換行 */
+    letter-spacing: 0.04em;
+    color: #314258;
+  }
+  /* 最後一段不要多餘空白 */
+  :where(.prose, .resume-preview, .rich) p:last-child {
+    margin-bottom: 0;
+  }
+  /* 空段落直接隱藏，避免編輯器多產生 <p><br></p> */
+  :where(.prose, .resume-preview, .rich) p:empty {
+    display: none;
+  }
+}

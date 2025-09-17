@@ -13,6 +13,7 @@ declare module 'vue' {
     ClassSidebar: typeof import('./components/class/ClassSidebar.vue')['default']
     DefaultFooter: typeof import('./components/layouts/DefaultFooter.vue')['default']
     DefaultHeader: typeof import('./components/layouts/DefaultHeader.vue')['default']
+    FavoriteTab: typeof import('./components/profile/tabs/FavoriteTab.vue')['default']
     HeroAdvice: typeof import('./components/home/HeroAdvice.vue')['default']
     HeroBanner: typeof import('./components/home/HeroBanner.vue')['default']
     HeroBrand: typeof import('./components/home/HeroBrand.vue')['default']
@@ -20,9 +21,14 @@ declare module 'vue' {
     HeroDesc: typeof import('./components/home/HeroDesc.vue')['default']
     MyLearningBanner: typeof import('./components/myLearning/MyLearningBanner.vue')['default']
     MyLearningDetail: typeof import('./components/myLearning/MyLearningDetail.vue')['default']
+    ProfileBanner: typeof import('./components/profile/ProfileBanner.vue')['default']
+    ProfileMain: typeof import('./components/profile/ProfileMain.vue')['default']
+    ResumePreview: typeof import('./components/resume/ResumePreview.vue')['default']
+    ResumeTab: typeof import('./components/profile/tabs/ResumeTab.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SearchBanner: typeof import('./components/search/SearchBanner.vue')['default']
     SearchList: typeof import('./components/search/SearchList.vue')['default']
+    SettingsTab: typeof import('./components/profile/tabs/SettingsTab.vue')['default']
   }
 }

@@ -5,6 +5,12 @@ import Search from '@/views/Search.vue'
 import Teach from '@/views/Teach.vue'
 import Class from '@/views/Class.vue'
 import MyLearning from '@/views/MyLearning.vue'
+import Profile from '@/views/Profile.vue'
+import Resume from '@/views/Resume.vue'
+import ResumeHome from '@/views/resume/ResumeHome.vue'
+import ResumeCreate from '@/views/resume/ResumeCreate.vue'
+import ResumeDetail from '@/views/resume/ResumeDetail.vue'
+import ResumeEdit from '@/views/resume/ResumeEdit.vue'
 import Login from '@/views/Login.vue'
 import Signup from '@/views/Signup.vue'
 
@@ -20,8 +26,19 @@ const router = createRouter({
         { path: 'teach', name: 'teach', component: Teach },
         { path: 'class', name: 'class', component: Class },
         { path: 'mylearning', name: 'mylearning', component: MyLearning },
+        { path: 'profile', name: 'profile', component: Profile },
+        {
+          path: 'resume',
+          component: Resume,
+          children: [
+            { path: '', name: 'resumeHome', component: ResumeHome },
+            { path: 'create', name: 'resumeCreate', component: ResumeCreate },
+            { path: ':id', name: 'resumeDetail', component: ResumeDetail },
+            { path: ':id/edit', name: 'resumeEdit', component: ResumeEdit },
+          ],
+        },
         { path: 'login', name: 'login', component: Login },
-        { path: 'signup', name: 'signup', component: Signup },
+        { path: 'signup', name: 'signup', component: Signup },   
       ],
     },
   ],

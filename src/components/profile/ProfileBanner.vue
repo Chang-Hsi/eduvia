@@ -1,6 +1,6 @@
 <template>
   <div class="w-full h-[15vh] flex justify-center items-center" :style="bannerBgStyle">
-    <span class="text-5xl text-black/90 font-extrabold">我的學習</span>
+    <span class="text-5xl text-black/90 font-extrabold">我的個人檔案</span>
   </div>
 </template>
 
