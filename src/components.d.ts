@@ -33,7 +33,6 @@ declare module 'vue' {
     SearchBanner: typeof import('./components/search/SearchBanner.vue')['default']
     SearchList: typeof import('./components/search/SearchList.vue')['default']
     SettingsTab: typeof import('./components/profile/tabs/SettingsTab.vue')['default']
-    TempResumePreview: typeof import('./components/resume/tempResumePreview.vue')['default']
     ThemeToolbar: typeof import('./components/resume/ThemeToolbar.vue')['default']
   }
 }

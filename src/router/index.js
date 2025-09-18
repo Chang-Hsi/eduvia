@@ -21,10 +21,10 @@ const router = createRouter({
       path: '/',
       component: DefaultLayout,
       children: [
-        { path: '', name: 'home', component: Home },
-        { path: 'search', name: 'search', component: Search },
+        //{ path: '', name: 'home', component: Home },
+        //{ path: 'search', name: 'search', component: Search },
         { path: 'teach', name: 'teach', component: Teach },
-        { path: 'class', name: 'class', component: Class },
+        //{ path: 'class', name: 'class', component: Class },
         { path: 'mylearning', name: 'mylearning', component: MyLearning },
         { path: 'profile', name: 'profile', component: Profile },
         {

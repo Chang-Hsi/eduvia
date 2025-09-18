@@ -1,4 +1,4 @@
-<!-- src/components/TrustedByBar.vue -->
+<!-- src/components/HeroBrand.vue -->
 <template>
   <section class="theme-fixed-light py-10">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

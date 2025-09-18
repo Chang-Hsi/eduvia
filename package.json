@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "postbuild": "node scripts/prerender-classes.mjs",
+    "preview": "vite preview",
+    "prerender:classes": "node scripts/prerender-classes.mjs",
+    "build:prerender": "vite build && node scripts/prerender-classes.mjs"
   },
   "dependencies": {
     "@primeuix/themes": "^1.2.3",

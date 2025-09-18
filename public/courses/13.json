@@ -1,0 +1,14 @@
+{
+  "id": "13",
+  "title": "Python 機器學習｜scikit-learn 完整入門",
+  "seoDescription": "從監督式到非監督式學習，掌握資料切分、交叉驗證、模型評估與超參數調校，打造可上線的 ML 流程。",
+  "summary": "一站式 ML 入門，涵蓋常見演算法與評估方法。",
+  "rating": 4.9,
+  "ratingCount": 11100,
+  "ogImage": "https://images.unsplash.com/photo-1517433456452-f9633a875f6f?q=80&w=1200&auto=format&fit=crop",
+  "video": {
+    "url": "https://www.youtube.com/watch?v=Gv9_4yMHFhI",
+    "thumb": "https://i.ytimg.com/vi/Gv9_4yMHFhI/hqdefault.jpg",
+    "uploadDate": "2024-03-02"
+  }
+}

@@ -1,3 +1,4 @@
+<!-- src/components/HeroDesc.vue -->
 <template>
   <div class="w-full h-[15vh] flex justify-center items-center">
     <span class="text-5xl text-black/90 font-extrabold"

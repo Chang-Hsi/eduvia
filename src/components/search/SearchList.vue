@@ -632,8 +632,12 @@ const allCourses = ref([
   },
 ]);
 
-function goClassing() {
-  router.push("/class");
+function goClassing(id) {
+  if (id) {
+    window.location.href = `/class/${encodeURIComponent(id)}/`; // 👍 一律漂亮網址
+  } else {
+    window.location.href = `/class/`;
+  }
 }
 
 // 先做「關鍵字全域過濾」：q 為「所有課程」或空白就不過濾

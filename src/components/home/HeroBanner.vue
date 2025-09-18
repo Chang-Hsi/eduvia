@@ -1,3 +1,4 @@
+<!-- src/components/HeroBanner.vue -->
 <template>
   <section class="w-full max-h-[60vh]">
     <!-- 輪播區 -->

@@ -1,13 +1,80 @@
+<!-- index.html -->
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + Vue</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- 基本 SEO：title / description -->
+  <title>Eduvia｜學你想學的</title>
+  <meta name="description" content="您所有需要的技能皆整合於一處">
+
+  <!-- 依環境變數動態注入 canonical / OG / Twitter / JSON-LD -->
+  <script type="module">
+    // 讀取環境變數
+    const SITE_NAME = import.meta.env.VITE_SITE_NAME || 'Eduvia';
+    const SITE_URL = (import.meta.env.VITE_SITE_URL || location.origin).replace(/\/+$/, '/');
+    const DESC = import.meta.env.VITE_SITE_DESC || (document.querySelector('meta[name="description"]')?.content || '');
+    const OG_IMAGE = import.meta.env.VITE_OG_IMAGE || (location.origin + '/og-home.jpg');
+    const TW = import.meta.env.VITE_TWITTER || '';
+
+    // canonical
+    const link = document.createElement('link');
+    link.rel = 'canonical';
+    link.href = SITE_URL;
+    document.head.appendChild(link);
+
+    // Open Graph / Twitter
+    const metas = [
+      ['property', 'og:type', 'website'],
+      ['property', 'og:site_name', SITE_NAME],
+      ['property', 'og:title', document.title],
+      ['property', 'og:description', DESC],
+      ['property', 'og:url', SITE_URL],
+      ['property', 'og:image', OG_IMAGE],
+      ['name', 'twitter:card', 'summary_large_image'],
+      ['name', 'twitter:site', TW]
+    ];
+    for (const [k, n, v] of metas) {
+      const m = document.createElement('meta');
+      m.setAttribute(k, n);
+      m.setAttribute('content', v);
+      document.head.appendChild(m);
+    }
+
+    // JSON-LD：宣告站內搜尋（放首頁即可）
+    const ld = {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": SITE_NAME,
+      "url": SITE_URL,
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": SITE_URL.replace(/\/$/, '') + "/search/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    };
+    const ldScript = document.createElement('script');
+    ldScript.type = 'application/ld+json';
+    ldScript.textContent = JSON.stringify(ld);
+    document.head.appendChild(ldScript);
+  </script>
+</head>
+
+<body>
+  <div id="app"></div>
+
+  <script type="module">
+    // 只有「根路徑 / 」載入 Home 的 MPA，其餘路徑載入原本 SPA
+    const p = location.pathname.replace(/\/+$/, "") || "/";
+    if (p === "/") {
+      import("/src/home-main.js");
+    } else {
+      import("/src/main.js");
+    }
+  </script>
+</body>
+
 </html>

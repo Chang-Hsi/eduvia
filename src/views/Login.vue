@@ -47,18 +47,17 @@
 </template>
 
 <script setup>
+// 調整點：這頁是 SPA，但登入成功要導到「MPA 首頁或來源頁」→ 用 location.replace() 整頁跳轉
 import { ref } from "vue";
-import { useRouter } from "vue-router";
 import InputText from "primevue/inputtext";
 import Password from "primevue/password";
 import Button from "primevue/button";
 import LoginSvg from "@/assets/svg/Login.svg";
 
-// 新增：使用 Pinia 的 auth store
+// 使用 Pinia 的 auth store
 import { useAuthStore } from "@/stores/auth";
 const auth = useAuthStore();
 
-const router = useRouter();
 const account = ref("");
 const password = ref("");
 
@@ -75,11 +74,36 @@ function createMockIdToken() {
   return `eduvia.mock.token.${Date.now()}`;
 }
 
-// 替換：成功時呼叫 auth.login()，Header 會即時更新
+/* 新增：處理登入後要回到哪裡
+   - 支援 ?r=/search/?q=xxx 這種 redirect 參數
+   - 僅允許同站內部路徑（以 / 開頭）；異常或外站一律回 "/"
+   - /class /search 自動補尾斜線
+*/
+function ensureSlash(p) {
+  if (p === "/class") return "/class/";
+  if (p === "/search") return "/search/";
+  return p || "/";
+}
+function getRedirectTarget() {
+  try {
+    const url = new URL(window.location.href);
+    const r = url.searchParams.get("r");
+    if (!r) return "/";
+    const decoded = decodeURIComponent(r);
+    if (!decoded.startsWith("/")) return "/"; // 只允許站內路徑
+    return ensureSlash(decoded);
+  } catch {
+    return "/";
+  }
+}
+
+// 成功時呼叫 auth.login()，然後整頁跳轉（避免 SPA push 到不存在的 / 路由）
 function onSubmit() {
   if (account.value === "1" && password.value === "1") {
     auth.login(mockUserInfo, createMockIdToken());
-    router.push("/");
+    const target = getRedirectTarget();
+    // 用 replace 避免「返回」又回到登入頁的壞體驗
+    window.location.replace(target);
   } else {
     console.log("Mock login failed. 使用帳號=1、密碼=1");
   }

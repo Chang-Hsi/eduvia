@@ -1,0 +1,14 @@
+{
+  "id": "10",
+  "title": "Python 入門特訓 – 基礎實作到證照攻略",
+  "seoDescription": "從環境建置、語法基礎到實作案例與 TQC+ 重點，一次打好 Python 基礎並快速掌握考照關鍵。",
+  "summary": "從零開始、直達實作與證照要點。含小專題與常見考點整理。",
+  "rating": 5.0,
+  "ratingCount": 617,
+  "ogImage": "https://images.unsplash.com/photo-1518773553398-650c184e0bb3?q=80&w=1200&auto=format&fit=crop",
+  "video": {
+    "url": "https://www.youtube.com/watch?v=wqRlKVRUV_k&list=PL-g0fdC5RMboYEyt6QS2iLb_1m7QcgfHk",
+    "thumb": "https://i.ytimg.com/vi/wqRlKVRUV_k/hqdefault.jpg",
+    "uploadDate": "2024-05-12"
+  }
+}

@@ -1,4 +1,4 @@
-<!-- src/components/LearnersViewingRow.vue -->
+<!-- src/components/HeroAdvice.vue -->
 <template>
   <section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
     <h2 class="text-2xl md:text-[28px] font-bold text-gray-900 mb-4">學習者正在檢視</h2>

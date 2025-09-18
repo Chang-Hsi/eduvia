@@ -1,0 +1,14 @@
+{
+  "id": "14",
+  "title": "Python 機器學習｜特徵工程與交叉驗證",
+  "seoDescription": "深入處理遺失值、編碼、標準化與特徵選擇，結合 K-Fold 與管線化打造穩健可複製的建模流程。",
+  "summary": "掌握特徵工程要領，用交叉驗證與 Pipeline 強化泛化能力。",
+  "rating": 4.7,
+  "ratingCount": 8300,
+  "ogImage": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1200&auto=format&fit=crop",
+  "video": {
+    "url": "https://www.youtube.com/watch?v=aircAruvnKk",
+    "thumb": "https://i.ytimg.com/vi/aircAruvnKk/hqdefault.jpg",
+    "uploadDate": "2024-02-10"
+  }
+}

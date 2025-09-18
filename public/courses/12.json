@@ -1,0 +1,14 @@
+{
+  "id": "12",
+  "title": "Python 資料科學｜從 Excel 轉職資料人",
+  "seoDescription": "用 Python 取代手動表單流程：讀寫 Excel、樞紐分析、清理規整與自動化報表，讓工作日常效率大幅提升。",
+  "summary": "把 Excel 技巧搬進 Python，自動化處理資料與報表。",
+  "rating": 4.6,
+  "ratingCount": 6800,
+  "ogImage": "https://images.unsplash.com/photo-1553877522-43269d4ea984?q=80&w=1200&auto=format&fit=crop",
+  "video": {
+    "url": "https://www.youtube.com/watch?v=rA9Kq5yn9o8",
+    "thumb": "https://i.ytimg.com/vi/rA9Kq5yn9o8/hqdefault.jpg",
+    "uploadDate": "2024-04-08"
+  }
+}

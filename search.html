@@ -1,0 +1,11 @@
+<!-- ./search.html -->
+<!doctype html>
+<html lang="zh-Hant">
+<meta charset="utf-8" />
+<script>
+  var q = location.search || "";
+  var h = location.hash || "";
+  location.replace("/search/" + q + h);
+</script>
+
+</html>

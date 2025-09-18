@@ -1,4 +1,5 @@
 <!-- src/layouts/DefaultHeader.vue -->
+<!-- src/layouts/DefaultHeader.vue -->
 <template>
   <header
     class="theme-fixed-light sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm"
@@ -19,8 +20,9 @@
         </svg>
       </button>
 
-      <RouterLink to="/" class="shrink-0 font-extrabold text-black tracking-tight text-xl"
-        >eduvia</RouterLink
+      <!-- 變更：Logo 用純 <a>，確保回到 / 會整頁載入 Home 的 MPA -->
+      <a href="/" class="shrink-0 font-extrabold text-black tracking-tight text-xl"
+        >eduvia</a
       >
 
       <div class="hidden md:flex">
@@ -68,9 +70,10 @@
           我的學習
         </div>
 
-        <RouterLink to="/teach" class="text-sm text-gray-700 hover:text-gray-900"
-          >在 eduvia 上教學</RouterLink
-        >
+        <!-- teach 是 SPA，仍可用 RouterLink（在沒有 router 時由替身渲染成 <a>） -->
+        <RouterLink to="/teach" class="text-sm text-gray-700 hover:text-gray-900">
+          在 eduvia 上教學
+        </RouterLink>
 
         <Button
           rounded
@@ -247,7 +250,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter } from "vue-router"; // 變更：可能沒有安裝 router，下面會 try/catch
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
 import IconField from "primevue/iconfield";
@@ -267,7 +270,45 @@ onMounted(() => {
   auth.initFromStorage();
 });
 
-const router = useRouter();
+/* =========================
+   路由輔助（關鍵改動）
+   ========================= */
+// 變更：router 成為可選；在 MPA（/、/class/）沒有安裝 vue-router 也不會爆
+let router = null;
+try {
+  router = useRouter();
+} catch (e) {
+  router = null;
+}
+
+// 變更：定義 MPA 路徑集合；遇到它們一律整頁跳轉
+const MPA_PATHS = new Set(["/", "/class/", "/search/"]);
+
+// 變更：補尾斜線（/class → /class/；/search → /search/）
+function ensureSlash(p) {
+  if (p === "/class") return "/class/";
+  if (p === "/search") return "/search/";
+  return p;
+}
+
+// 變更：統一跳轉入口
+function nav(path) {
+  const full = ensureSlash(path);
+  if (!router || MPA_PATHS.has(full)) {
+    window.location.href = full;
+  } else {
+    router.push(full);
+  }
+}
+
+// 變更：搜尋頁固定用 MPA（因為已拆成 MPA）
+function navSearch(q) {
+  const query = q ? `?q=${encodeURIComponent(q)}` : "";
+  window.location.href = "/search/" + query;
+}
+
+/* ========================= */
+
 const keyword = ref("");
 const acSuggestions = ref([]);
 function onAutoComplete(e) {
@@ -283,7 +324,8 @@ function onAutoSelect(e) {
 }
 function onSearch() {
   if (!keyword.value) return;
-  router.push({ name: "search", query: { q: keyword.value } });
+  // 變更：原本 router.push({ name: 'search', ... }) → 改用 MPA 導向
+  navSearch(keyword.value);
 }
 
 const suggestPool = [
@@ -354,14 +396,16 @@ const langItems = [
 const myLearningPopover = ref();
 function onMyLearningClick(event) {
   if (isLoggedIn.value) {
-    router.push("/mylearning");
+    // SPA 路由，若在 MPA 也能 fallback 成整頁跳轉
+    nav("/mylearning");
   } else {
     myLearningPopover.value?.toggle(event);
   }
 }
 function goExploreCourses() {
   myLearningPopover.value?.hide();
-  router.push({ name: "search", query: { q: "所有課程" } });
+  // 變更：固定導到 MPA 搜尋頁
+  navSearch("所有課程");
 }
 
 // 使用者選單
@@ -371,16 +415,17 @@ function toggleUserMenu(e) {
 }
 function goProfile() {
   userMenu.value?.hide();
-  router.push("/profile");
+  nav("/profile");
 }
 function goOrders() {
   userMenu.value?.hide();
-  router.push("/orders");
+  nav("/orders");
 }
 function logout() {
-  auth.logout(); // ← 改呼叫 store，Header 立即更新
+  auth.logout();
   userMenu.value?.hide();
-  router.push("/");
+  // 變更：回首頁用 MPA
+  nav("/");
 }
 
 function toggleExplore(event) {
@@ -392,34 +437,36 @@ function toggleLang(event) {
   langMenuMobile.value?.toggle?.(event);
 }
 function onExplore(label) {
-  router.push({ name: "search", query: { q: label } });
+  // 變更：探索都導到 MPA 搜尋頁
+  navSearch(label);
   mobileOpen.value = false;
 }
 function onLang(locale) {
   console.log("switch locale to", locale);
 }
 function goPricing() {
-  router.push("/pricing");
+  nav("/pricing");
   mobileOpen.value = false;
 }
 function goBusiness() {
-  router.push("/business");
+  nav("/business");
   mobileOpen.value = false;
 }
 function goTeach() {
-  router.push("/teach");
+  nav("/teach");
   mobileOpen.value = false;
 }
 function goCart() {
-  router.push("/cart");
+  nav("/cart");
   mobileOpen.value = false;
 }
 function goLogin() {
-  router.push("/login");
+  const r = encodeURIComponent(location.pathname + location.search);
+  nav(`/login?r=${r}`);
   mobileOpen.value = false;
 }
 function goSignup() {
-  router.push("/signup");
+  nav("/signup");
   mobileOpen.value = false;
 }
 
