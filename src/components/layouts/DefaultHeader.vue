@@ -294,11 +294,21 @@ function ensureSlash(p) {
 // 變更：統一跳轉入口
 function nav(path) {
   const full = ensureSlash(path);
-  if (!router || MPA_PATHS.has(full)) {
-    window.location.href = full;
-  } else {
+
+  // 有 router 且不是 MPA → 走 SPA
+  if (router && !MPA_PATHS.has(full)) {
     router.push(full);
+    return;
   }
+
+  // MPA 路徑 → 直接整頁
+  if (MPA_PATHS.has(full)) {
+    window.location.href = full;
+    return;
+  }
+
+  // 沒有 router（例如正在 MPA 頁）但要去 SPA 路由 → 走橋接
+  window.location.href = `/?r=${encodeURIComponent(full)}`;
 }
 
 // 變更：搜尋頁固定用 MPA（因為已拆成 MPA）
@@ -461,8 +471,7 @@ function goCart() {
   mobileOpen.value = false;
 }
 function goLogin() {
-  const r = encodeURIComponent(location.pathname + location.search);
-  nav(`/login?r=${r}`);
+  nav("/login");
   mobileOpen.value = false;
 }
 function goSignup() {

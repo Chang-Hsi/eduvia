@@ -7,6 +7,21 @@
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <!-- 🔗 超前橋接：把 /?r=/login 立即換成 /login，避免卡在 ?r= -->
+  <script>
+    (function () {
+      try {
+        var u = new URL(window.location.href);
+        var r = u.searchParams.get('r');
+        // 僅允許站內、且排除 /class /search（它們是 MPA）
+        var allow = r && /^\/(?!class(?:\/|$)|search(?:\/|$))[A-Za-z0-9._~/%\-]*$/i.test(r);
+        if (allow) {
+          window.location.replace(r + (u.hash || ''));
+        }
+      } catch (e) { /* ignore */ }
+    })();
+  </script>
+
   <!-- 基本 SEO：title / description -->
   <title>Eduvia｜學你想學的</title>
   <meta name="description" content="您所有需要的技能皆整合於一處">
