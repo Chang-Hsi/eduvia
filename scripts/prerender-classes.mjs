@@ -8,28 +8,25 @@ import dotenv from "dotenv";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
 const OUT_DIR = path.join(ROOT, "dist");
-const BASE_HTML = path.join(OUT_DIR, "class", "index.html");
-const COURSES_DIR = path.join(ROOT, "public", "courses");
+const BASE_HTML = path.join(OUT_DIR, "class", "index.html");   // build 後的母版
+const COURSES_DIR = path.join(ROOT, "public", "courses");      // 假資料來源
 
-// ---- env loader：依 NODE_ENV 選檔 ----
+// ── 讀取 .env（依據 BUILD_MODE / NODE_ENV） ───────────────────────────
 (function loadEnv() {
   const mode = (process.env.BUILD_MODE || process.env.NODE_ENV || "production").toLowerCase();
-  const candidates = [`.env.${mode}`, ".env"];
-  for (const name of candidates) {
+  for (const name of [`.env.${mode}`, ".env"]) {
     const p = path.join(ROOT, name);
-    if (fsSync.existsSync(p)) {
-      dotenv.config({ path: p });
-      break;
-    }
+    if (fsSync.existsSync(p)) { dotenv.config({ path: p }); break; }
   }
 })();
 
-const SITE_URL = (process.env.VITE_SITE_URL || "").replace(/\/+$/, "");
-const SITE_NAME = process.env.VITE_SITE_NAME || "Eduvia";
+const SITE_URL   = (process.env.VITE_SITE_URL || "").replace(/\/+$/, ""); // 無尾斜線
+const SITE_NAME  = process.env.VITE_SITE_NAME || "Eduvia";
 const DEFAULT_OG = process.env.VITE_OG_IMAGE || "";
-const SITE_DESC = process.env.VITE_SITE_DESC || "";
-const TWITTER = process.env.VITE_TWITTER || "";
+const SITE_DESC  = process.env.VITE_SITE_DESC || "";
+const TWITTER    = process.env.VITE_TWITTER || "";
 
+// ── 小工具 ─────────────────────────────────────────────────────────
 function esc(s = "") {
   return String(s)
     .replaceAll("&", "&amp;")
@@ -103,11 +100,55 @@ async function ensureDir(dir) {
   await fs.mkdir(dir, { recursive: true });
 }
 
+// ── sitemap 輸出工具 ───────────────────────────────────────────────
+async function writeSitemap(filename, items) {
+  const body = items.map(i => 
+`  <url>
+    <loc>${esc(i.loc)}</loc>
+    ${i.lastmod ? `<lastmod>${i.lastmod}</lastmod>` : ""}
+    ${i.changefreq ? `<changefreq>${i.changefreq}</changefreq>` : ""}
+  </url>`).join("\n");
+
+  const xml =
+`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${body}
+</urlset>
+`;
+  await fs.writeFile(path.join(OUT_DIR, filename), xml, "utf8");
+}
+
+async function writeSitemapIndex(filename, sitemapFiles) {
+  const now = new Date().toISOString();
+  const body = sitemapFiles.map(f => 
+`  <sitemap>
+    <loc>${esc(`${SITE_URL}/${f}`)}</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>`).join("\n");
+
+  const xml =
+`<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${body}
+</sitemapindex>
+`;
+  await fs.writeFile(path.join(OUT_DIR, filename), xml, "utf8");
+}
+
+async function writeRobotsTxt() {
+  const robots = `User-agent: *
+Allow: /
+Sitemap: ${SITE_URL}/sitemap.xml
+`;
+  await fs.writeFile(path.join(OUT_DIR, "robots.txt"), robots, "utf8");
+}
+
+// ── 主流程 ─────────────────────────────────────────────────────────
 async function main() {
-  // 1) 先讀 dist/class/index.html 當母版
+  // 1) 讀 dist/class/index.html 當母版
   const baseHtml = await fs.readFile(BASE_HTML, "utf8");
 
-  // 2) 列出 public/courses/*.json
+  // 2) 讀 public/courses/*.json（你現在用這邊的假資料；未來可改成打 API）
   let files = [];
   try {
     files = (await fs.readdir(COURSES_DIR))
@@ -118,43 +159,56 @@ async function main() {
     return;
   }
 
-  const urls = [];
+  const classItems = []; // 用來寫 sitemap-class.xml
+  const nowIso = new Date().toISOString();
 
   for (const f of files) {
     const raw = await fs.readFile(f, "utf8");
     const course = JSON.parse(raw);
-    const id = String(course.id ?? path.basename(f, ".json"));
+
+    const id  = String(course.id ?? path.basename(f, ".json"));
     const url = `${SITE_URL}/class/${encodeURIComponent(id)}/`;
-    const title = `${course.title}｜${SITE_NAME}`;
-    const desc = course.seoDescription || course.summary || SITE_DESC || "";
+    const title   = `${course.title}｜${SITE_NAME}`;
+    const desc    = course.seoDescription || course.summary || SITE_DESC || "";
     const ogImage = course.ogImage || DEFAULT_OG || "";
 
+    // 預渲染出 /dist/class/:id/index.html
     const outDir = path.join(OUT_DIR, "class", id);
     await ensureDir(outDir);
-
     const html = injectSeo(baseHtml, {
       title, desc, url, ogImage,
       jsonLd: buildJsonLd(course, url)
     });
-
     await fs.writeFile(path.join(outDir, "index.html"), html, "utf8");
-    urls.push(url);
     console.log(`[prerender] /class/${id}/ 已輸出`);
+
+    // 收集 sitemap item（lastmod 有就用，沒有用 build 時間）
+    const lastmod = course.updatedAt ? new Date(course.updatedAt).toISOString() : nowIso;
+    classItems.push({ loc: url, lastmod, changefreq: "weekly" });
   }
 
-  // 3) 選配：輸出簡易 sitemap
-  if (urls.length) {
-    const now = new Date().toISOString();
-    const xml =
-      `<?xml version="1.0" encoding="UTF-8"?>\n` +
-      `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-      urls.map((u) =>
-        `  <url>\n    <loc>${esc(u)}</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>weekly</changefreq>\n  </url>`
-      ).join("\n") +
-      `\n</urlset>\n`;
-    await fs.writeFile(path.join(OUT_DIR, "sitemap-class.xml"), xml, "utf8");
-    console.log(`[prerender] sitemap-class.xml 已輸出`);
+  // 3) 生成 sitemaps + index + robots.txt
+  // 3-1) 靜態頁
+  const staticItems = [
+    { loc: `${SITE_URL}/`,       lastmod: nowIso, changefreq: "weekly" },
+    { loc: `${SITE_URL}/class/`, lastmod: nowIso, changefreq: "weekly" },
+  ];
+  await writeSitemap("sitemap-static.xml", staticItems);
+
+  // 3-2) 課程頁
+  if (classItems.length) {
+    await writeSitemap("sitemap-class.xml", classItems);
   }
+
+  // 3-3) sitemap index（入口）
+  const entries = ["sitemap-static.xml"];
+  if (classItems.length) entries.push("sitemap-class.xml");
+  await writeSitemapIndex("sitemap.xml", entries);
+
+  // 3-4) robots.txt
+  await writeRobotsTxt();
+
+  console.log("[prerender] sitemap.xml、sitemap-static.xml、sitemap-class.xml、robots.txt 已輸出");
 }
 
 main().catch((e) => {
