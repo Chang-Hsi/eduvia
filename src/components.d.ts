@@ -21,6 +21,9 @@ declare module 'vue' {
     HeroDesc: typeof import('./components/home/HeroDesc.vue')['default']
     MyLearningBanner: typeof import('./components/myLearning/MyLearningBanner.vue')['default']
     MyLearningDetail: typeof import('./components/myLearning/MyLearningDetail.vue')['default']
+    PreviewCards: typeof import('./components/resume/variants/PreviewCards.vue')['default']
+    PreviewClassic: typeof import('./components/resume/variants/PreviewClassic.vue')['default']
+    PreviewGradient: typeof import('./components/resume/variants/PreviewGradient.vue')['default']
     ProfileBanner: typeof import('./components/profile/ProfileBanner.vue')['default']
     ProfileMain: typeof import('./components/profile/ProfileMain.vue')['default']
     ResumePreview: typeof import('./components/resume/ResumePreview.vue')['default']
@@ -30,5 +33,7 @@ declare module 'vue' {
     SearchBanner: typeof import('./components/search/SearchBanner.vue')['default']
     SearchList: typeof import('./components/search/SearchList.vue')['default']
     SettingsTab: typeof import('./components/profile/tabs/SettingsTab.vue')['default']
+    TempResumePreview: typeof import('./components/resume/tempResumePreview.vue')['default']
+    ThemeToolbar: typeof import('./components/resume/ThemeToolbar.vue')['default']
   }
 }

@@ -103,7 +103,12 @@
               @click="view(r)"
               label="查看"
             />
-            <Button size="small" severity="primary" @click="edit(r)" label="編輯" />
+            <Button
+              size="small"
+              severity="primary"
+              @click="onCreate('manual')"
+              label="編輯"
+            />
           </div>
         </article>
       </div>

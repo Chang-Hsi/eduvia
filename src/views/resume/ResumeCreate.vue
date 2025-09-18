@@ -1,6 +1,11 @@
 <!-- src/views/resume/ResumeCreate.vue -->
 <template>
   <section class="mx-auto max-w-full px-4 sm:px-6 lg:px-8 py-6 bg-gray-100">
+    <ThemeToolbar
+      class="fixed top-[65px] right-[20px] z-50"
+      v-model:color="ui.color"
+      v-model:template="ui.template"
+    />
     <div class="grid grid-cols-12 gap-6">
       <!-- 設置區塊 -->
       <div class="col-span-12 lg:col-span-6">
@@ -604,7 +609,7 @@
 
             <div class="flex justify-end gap-3">
               <Button label="儲存草稿" icon="pi pi-save" outlined @click="save" />
-              <Button label="預覽列印" icon="pi pi-print" @click="printView" />
+              <Button label="發佈履歷" icon="pi pi-print" @click="complete" />
             </div>
           </form>
         </div>
@@ -619,6 +624,8 @@
               :theme="ui.theme"
               :lang="ui.lang"
               :section-order="sectionOrder"
+              :primary-color="ui.color"
+              :template="ui.template"
             />
           </div>
         </div>
@@ -629,19 +636,30 @@
 
 <script setup>
 import { reactive, ref, watch, onMounted, onUnmounted, computed } from "vue";
+import { useRouter } from "vue-router";
 import InputText from "primevue/inputtext";
 import Dropdown from "primevue/dropdown";
 import DatePicker from "primevue/datepicker";
 import Editor from "primevue/editor";
 import Button from "primevue/button";
 import ResumePreview from "@/components/resume/ResumePreview.vue";
+import ThemeToolbar from "@/components/resume/ThemeToolbar.vue";
 import draggable from "vuedraggable";
+
+const router = useRouter();
 
 const defaultAvatar =
   "https://media.istockphoto.com/id/1337144146/zh/%E5%90%91%E9%87%8F/default-avatar-profile-icon-vector.jpg?s=612x612&w=0&k=20&c=P_sadMdbYdrMxYXPHD1zLsjvxKrXcl3WoFYeFX1_rcc=";
 
-/* UI & 預覽 */
-const ui = reactive({ theme: "classic", lang: "zh" });
+/* UI & 預覽（會存到 localStorage） */
+const ui = reactive({
+  theme: "classic",
+  lang: "zh",
+  color: "#1F6FB2",
+  template: "Gradient",
+});
+const UI_KEY = "resume:ui";
+
 const genders = ["不透露", "男", "女", "其他"];
 
 /* 區塊顯示 */
@@ -739,25 +757,22 @@ function removeExp(i) {
 function addProject() {
   resume.projects.push({ title: "", link: "", coverUrl: "", desc: "" });
 }
-
 function removeProject(i) {
   resume.projects.splice(i, 1);
   if (!resume.projects.length) showProjects.value = false;
 }
 
+/* 圖片：用 DataURL 存，刷新也能顯示 */
 const coverInputs = ref([]);
 function openCoverPicker(i) {
   coverInputs.value?.[i]?.click?.();
 }
-
 async function pickCover(i, e) {
   const f = e.target.files?.[0];
   if (!f) return;
-  // 以 DataURL 保存，重新整理仍能顯示
   resume.projects[i].coverUrl = await fileToDataUrl(f);
   e.target.value = "";
 }
-/* 頭像 */
 const avatarInput = ref(null);
 function openAvatarPicker() {
   avatarInput.value?.click();
@@ -765,12 +780,9 @@ function openAvatarPicker() {
 async function pickAvatar(e) {
   const f = e.target.files?.[0];
   if (!f) return;
-  // 以 DataURL 保存，重新整理仍能顯示
   resume.basic.avatarUrl = await fileToDataUrl(f);
   e.target.value = "";
 }
-
-// 新增：把檔案轉成 DataURL（base64），才能長期存在 localStorage
 function fileToDataUrl(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -780,14 +792,25 @@ function fileToDataUrl(file) {
   });
 }
 
-// 新增：啟動時從本地端回填草稿
+/* 本地儲存 */
+const KEY = "resume:draft";
+const SECTION_ORDER_KEY = "resume:sectionOrder";
+
+/* 拖曳順序 */
+const sectionItems = ref([
+  { key: "edu" },
+  { key: "skill" },
+  { key: "exp" },
+  { key: "proj" },
+]);
+const sectionOrder = computed(() => sectionItems.value.map((i) => i.key));
+
+/* 啟動時恢復 */
 function rehydrateDraft() {
   const raw = localStorage.getItem(KEY);
   if (!raw) return;
   try {
     const data = JSON.parse(raw);
-
-    // 不要替換整個 reactive 物件；用 Object.assign 與覆寫陣列
     Object.assign(resume.basic, data.basic || {});
     resume.educations = Array.isArray(data.educations) ? data.educations : [];
     resume.skillItems = Array.isArray(data.skillItems) ? data.skillItems : [];
@@ -795,42 +818,31 @@ function rehydrateDraft() {
     resume.projects = Array.isArray(data.projects) ? data.projects : [];
     resume.skills = Array.isArray(data.skills) ? data.skills : resume.skills;
 
-    // 依資料量自動顯示對應卡片
     showEducations.value = resume.educations.length > 0;
     showSkills.value = resume.skillItems.length > 0;
     showExperiences.value = resume.experiences.length > 0;
     showProjects.value = resume.projects.length > 0;
 
-    // 舊版若存到 blob: 連結，刷新後會失效，這裡清掉避免壞圖
     if (resume.basic.avatarUrl?.startsWith("blob:")) resume.basic.avatarUrl = "";
-    for (const p of resume.projects) {
-      if (p.coverUrl?.startsWith("blob:")) p.coverUrl = "";
-    }
+    for (const p of resume.projects) if (p.coverUrl?.startsWith("blob:")) p.coverUrl = "";
   } catch (err) {
     console.error("讀取本地草稿失敗：", err);
   }
 }
+function rehydrateUI() {
+  const raw = localStorage.getItem(UI_KEY);
+  if (!raw) return;
+  try {
+    const data = JSON.parse(raw);
+    if (data.theme) ui.theme = data.theme;
+    if (data.lang) ui.lang = data.lang;
+    if (data.color) ui.color = data.color;
+    if (data.template) ui.template = data.template;
+  } catch {}
+}
 
-/* 自動儲存草稿（localStorage） */
-const KEY = "resume:draft";
-
-// 新增：四張卡片的順序（預設順序）
-const sectionItems = ref([
-  { key: "edu" }, // 學歷
-  { key: "skill" }, // 專業技能
-  { key: "exp" }, // 工作經驗
-  { key: "proj" }, // 專案與作品集
-]);
-
-// 新增：順序的本地儲存 Key
-const SECTION_ORDER_KEY = "resume:sectionOrder";
-
-// 新增：把拖曳清單映射為預覽用的順序
-const sectionOrder = computed(() => sectionItems.value.map((i) => i.key));
-
-// 讀取已保存的順序（若有），並維持你原本鎖住根捲軸的行為
 onMounted(() => {
-  // 先恢復卡片順序（你原本就有）
+  // 區塊順序
   const saved = localStorage.getItem(SECTION_ORDER_KEY);
   if (saved) {
     try {
@@ -838,40 +850,65 @@ onMounted(() => {
       const allKeys = ["edu", "skill", "exp", "proj"];
       const valid = arr.filter((i) => allKeys.includes(i.key));
       const existing = new Set(valid.map((i) => i.key));
-      for (const k of allKeys) {
-        if (!existing.has(k)) valid.push({ key: k });
-      }
+      for (const k of allKeys) if (!existing.has(k)) valid.push({ key: k });
       sectionItems.value = valid;
-    } catch (_) {}
+    } catch {}
   }
-
-  // 新增：恢復表單內容草稿
+  // 表單 & UI
   rehydrateDraft();
+  rehydrateUI();
 
   // 你原本的：鎖根捲軸（僅本頁）
   document.body.classList.add("no-root-scroll");
 });
 
-// 新增：每次拖曳後自動保存順序
-watch(sectionItems, (v) => localStorage.setItem(SECTION_ORDER_KEY, JSON.stringify(v)), {
-  deep: true,
-});
 onUnmounted(() => {
   document.body.classList.remove("no-root-scroll");
 });
 
-// 保存草稿 & 區塊排序
+/* 自動保存 */
+watch(sectionItems, (v) => localStorage.setItem(SECTION_ORDER_KEY, JSON.stringify(v)), {
+  deep: true,
+});
 watch(resume, (v) => localStorage.setItem(KEY, JSON.stringify(v)), { deep: true });
+watch(ui, (v) => localStorage.setItem(UI_KEY, JSON.stringify(v)), { deep: true });
 
+/* 手動保存 */
 function save() {
-  // 保存表單資料
   localStorage.setItem(KEY, JSON.stringify(resume));
-  // 一併保存卡片順序
   localStorage.setItem(SECTION_ORDER_KEY, JSON.stringify(sectionItems.value));
+  localStorage.setItem(UI_KEY, JSON.stringify(ui)); // 把顏色/樣式也一起存
 }
 
-function printView() {
-  window.print();
+// 讀取使用者姓名（作為路由 id）
+function readUserNameFromStorage() {
+  try {
+    const raw = localStorage.getItem("eduviaUserInfo");
+    if (!raw) return "";
+    const u = JSON.parse(raw);
+    return String(u?.name || "").trim();
+  } catch {
+    return "";
+  }
+}
+
+// 轉成安全的路由參數（移除前後空白、避免出現 / 等分隔字元）
+function toSafeRouteId(s) {
+  if (!s) return "";
+  return s.trim().replace(/\//g, "／");
+}
+
+/* 完成：先 save，再跳轉到 resumeDetail */
+function complete() {
+  // 先存檔（表單 + 區塊順序 + UI 狀態）
+  save();
+
+  // 從本地端拿 eduviaUserInfo.name 當作 id
+  const name = readUserNameFromStorage();
+  const id = toSafeRouteId(name) || "preview";
+
+  // 跳頁（你的巢狀路由會變成 /resume/:id）
+  router.push({ name: "resumeDetail", params: { id } });
 }
 
 /* 收合 */
